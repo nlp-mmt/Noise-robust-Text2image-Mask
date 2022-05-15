@@ -1,0 +1,14 @@
+Namespace(align_suffix=None, alignfile=None, all_gather_list_size=16384, bpe=None, cpu=False, criterion='cross_entropy', dataset_impl='mmap', destdir='data-bin-2/en-de/test2016', empty_cache_freq=0, fp16=False, fp16_init_scale=128, fp16_no_flatten_grads=False, fp16_scale_tolerance=0.0, fp16_scale_window=None, joined_dictionary=False, log_format=None, log_interval=1000, lr_scheduler='fixed', memory_efficient_fp16=False, min_loss_scale=0.0001, no_progress_bar=False, nwordssrc=17200, nwordstgt=9800, only_source=False, optimizer='nag', padding_factor=8, seed=1, source_lang='en', srcdict=None, target_lang='de', task='translation', tensorboard_logdir='', testpref='data-raw-2/test_2016_flickr.bpe', tgtdict=None, threshold_loss_scale=None, thresholdsrc=0, thresholdtgt=0, tokenizer=None, trainpref='data-raw-2/train.bpe', user_dir=None, validpref='data-raw-2/valid.bpe', workers=12)
+[en] Dictionary: 5647 types
+[en] data-raw-2/train.bpe.en: 29000 sents, 423869 tokens, 0.0% replaced by <unk>
+[en] Dictionary: 5647 types
+[en] data-raw-2/valid.bpe.en: 1014 sents, 15064 tokens, 0.0% replaced by <unk>
+[en] Dictionary: 5647 types
+[en] data-raw-2/test_2016_flickr.bpe.en: 1000 sents, 14607 tokens, 0.0% replaced by <unk>
+[de] Dictionary: 5879 types
+[de] data-raw-2/train.bpe.de: 29000 sents, 433075 tokens, 0.0% replaced by <unk>
+[de] Dictionary: 5879 types
+[de] data-raw-2/valid.bpe.de: 1014 sents, 15708 tokens, 0.0% replaced by <unk>
+[de] Dictionary: 5879 types
+[de] data-raw-2/test_2016_flickr.bpe.de: 1000 sents, 14574 tokens, 0.0% replaced by <unk>
+Wrote preprocessed data to data-bin-2/en-de/test2016
