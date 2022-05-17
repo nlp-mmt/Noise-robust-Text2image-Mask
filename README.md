@@ -1,10 +1,10 @@
 # MultimodelMixed-MMT
- Leveraging Image and Text with MultimodelMixup for Multi-model Neural Machine Translation
+ Noise-robust Cross-modal Interactive Learning with Text2image Mask for Multi-modal Neural Machine Translation
 ## Requirements
 ubuntu  
-cuda==10.2  
-python==3.6  
-torch==1.5.1  
+cuda==11.2  
+python==3.7  
+torch==1.8.1  
 ## dataset
 txt dataWe employ the data set [Multi30K data set](http://www.statmt.org/wmt18/multimodal-task.html), then use [BPE](https://github.com/rsennrich/subword-nmt) to preprocess the raw data(dataset/data/task1/tok/). Image features are extracted through the pre-trained Resnet-101.  
 ##### BPE (learn_joint_bpe_and_vocab.py and apply_bpe.py)
