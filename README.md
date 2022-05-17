@@ -9,7 +9,7 @@ torch==1.5.1
 txt dataWe employ the data set [Multi30K data set](http://www.statmt.org/wmt18/multimodal-task.html), then use [BPE](https://github.com/rsennrich/subword-nmt) to preprocess the raw data(dataset/data/task1/tok/). Image features are extracted through the pre-trained Resnet-101.  
 ##### BPE (learn_joint_bpe_and_vocab.py and apply_bpe.py)
 English, German, French use BPE participle separately.   
--s 10000 \
+-s 6000 \
 --vocabulary-threshold 1 \
 ## MultimodelMixed-MMT Quickstart
 ### Step 1: preprocess.py  
