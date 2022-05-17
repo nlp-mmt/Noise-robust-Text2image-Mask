@@ -9,6 +9,6 @@ python3 preprocess.py \
   --nwordssrc 17200 \
   --nwordstgt 9800 \
   --workers 12 \
-  --destdir data-bin-2/en-de/test2016 \
+  --destdir data-bin/en-de/test2016 \
 
   
