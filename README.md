@@ -17,17 +17,6 @@ step 2: bash data-train.sh
 step 3: bash data-checkpoints.sh  
 step 4: bash data-generate.sh  
 The data-bin folder is the text data processed by bash data-preprocess.sh. Add the extracted image features here to start training the model.  
-### Step 1: preprocess.py  
-  --source-lang $SRC_LANG \
-  --target-lang $TGT_LANG \
-  --trainpref $TMP_DIR/train.bpe \
-  --validpref $TMP_DIR/val.bpe \
-  --testpref $TMP_DIR/test_2016_flickr.bpe \
-  --nwordssrc 17200 \
-  --nwordstgt 9800 \
-  --workers 12 \
-  --destdir $DATA_DIR   
-
 
 ## Reproduce Existing Methods  
 Doubly-ATT. 
