@@ -30,9 +30,13 @@ The data-bin folder is the text data processed by bash data-preprocess.sh. Add t
 
 
 ## Reproduce Existing Methods  
-Doubly-ATT. [fairseq-Doubly-att.zip](https://github.com/DLMulMix/DLMulMix/files/7895802/fairseq-Doubly-att.zip)  
+Doubly-ATT. 
+[fairseq-Doubly-att.zip](https://github.com/nlp-mmt/Noise-robust-Text2image-Mask/files/8716580/fairseq-Doubly-att.zip)
 
 Multimodal Transformer. 
-[fairseq-Multimodal_Transformer.zip](https://github.com/DLMulMix/DLMulMix/files/7895817/fairseq-Multimodal_Transformer.zip)
+[fairseq-Multimodal_Transformer.zip](https://github.com/nlp-mmt/Noise-robust-Text2image-Mask/files/8716584/fairseq-Multimodal_Transformer.zip)
 
-Graph-based MMT. [fairseq-Graph-based.zip](https://github.com/DLMulMix/DLMulMix/files/7895821/fairseq-Graph-based.zip)
+Graph-based MMT. 
+[fairseq-Graph-based.zip](https://github.com/nlp-mmt/Noise-robust-Text2image-Mask/files/8716585/fairseq-Graph-based.zip)
+
+
