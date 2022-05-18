@@ -28,4 +28,3 @@ Multimodal Transformer.
 Graph-based MMT. 
 [fairseq-Graph-based.zip](https://github.com/nlp-mmt/Noise-robust-Text2image-Mask/files/8716585/fairseq-Graph-based.zip)
 
-
