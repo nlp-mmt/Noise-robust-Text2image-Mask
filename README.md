@@ -12,6 +12,11 @@ English, German, French use BPE participle separately.
 -s 6000 \
 --vocabulary-threshold 1 \
 ## MultimodelMixed-MMT Quickstart
+Step 1: bash data-preprocess.sh  Then add the pre-trained Resnet-101 image feature to $DATA_DIR   
+step 2: bash data-train.sh  
+step 3: bash data-checkpoints.sh  
+step 4: bash data-generate.sh  
+The data-bin folder is the text data processed by bash data-preprocess.sh. Add the extracted image features here to start training the model.  
 ### Step 1: preprocess.py  
   --source-lang $SRC_LANG \
   --target-lang $TGT_LANG \
@@ -22,36 +27,12 @@ English, German, French use BPE participle separately.
   --nwordstgt 9800 \
   --workers 12 \
   --destdir $DATA_DIR   
-##### Then add the pre-trained Resnet-101 image feature to $DATA_DIR 
-### Step 2: train.py  
-  $DATA_DIR  
-  --arch transformer_iwslt_de_en  \
-  --share-decoder-input-output-embed \
-  --clip-norm 0 --optimizer adam --lr 0.005 \
-  --source-lang $SRC_LANG --target-lang $TGT_LANG --max-tokens 1536 --no-progress-bar \
-  --log-interval 100 --min-lr '1e-09' --weight-decay 0.1 \
-  --criterion label_smoothed_cross_entropy --label-smoothing 0.2 \
-  --lr-scheduler inverse_sqrt \
-  --max-update 20000 --warmup-updates 4000 --warmup-init-lr '1e-07' --update-freq 4\
-  --adam-betas '(0.9, 0.98)' --keep-last-epochs 20 \
-  --dropout 0.3 \
-  --tensorboard-logdir $TRAIN_DIR/log --log-format simple\
-  --save-dir $TRAIN_DIR/ckpt  \
-  --eval-bleu \
-  --patience 15 \
-  --fp16     \   
-### Step 3: scripts/average_checkpoints.py
-  --inputs $TRAIN_DIR/ckpt \
-  --num-epoch-checkpoints 10  \
-  --output $TRAIN_DIR/ckpt/model.pt  
-### Step 4: generate.py
-  $DATA_DIR  
-  --path $TRAIN_DIR/ckpt/model.pt \
-  --source-lang $SRC_LANG \
-  --target-lang $TGT_LANG \
-  --beam 5 \
-  --num-workers 12 \
-  --batch-size 128 \
-  --results-path  $TRAIN_DIR/ckpt/results2016 \
-  --fp16   \
-  --remove-bpe  \
+
+
+## Reproduce Existing Methods  
+Doubly-ATT. [fairseq-Doubly-att.zip](https://github.com/DLMulMix/DLMulMix/files/7895802/fairseq-Doubly-att.zip)  
+
+Multimodal Transformer. 
+[fairseq-Multimodal_Transformer.zip](https://github.com/DLMulMix/DLMulMix/files/7895817/fairseq-Multimodal_Transformer.zip)
+
+Graph-based MMT. [fairseq-Graph-based.zip](https://github.com/DLMulMix/DLMulMix/files/7895821/fairseq-Graph-based.zip)
