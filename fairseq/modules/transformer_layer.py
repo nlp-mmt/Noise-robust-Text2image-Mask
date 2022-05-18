@@ -24,12 +24,7 @@ class HighWayNet(nn.Module):
     def __init__(self, args):
         super().__init__()
         self.dropout = args.attention_dropout
-        # self.lin_lay = nn.ModuleList([
-        #     nn.Linear(params.hidden_size * 2, params.hidden_size * 2)
-        #     for _ in range(2)])
-        # self.gat_lay = nn.ModuleList([
-        #     nn.Linear(params.hidden_size * 2, params.hidden_size * 2)
-        #     for _ in range(2)])
+
         for i in range(2):
             setattr(self, 'highway_linear{}'.format(i),
                     nn.Sequential(nn.Linear(args.encoder_embed_dim * 2, args.encoder_embed_dim * 2),
@@ -140,20 +135,8 @@ class TransformerEncoderLayer(nn.Module):
         mask_txt = torch.bmm(x, src_img_features.transpose(1, 2)) / math.sqrt(128)
         mask_txt = F.softmax(mask_txt, dim=-1)
 
-        # mask_txt = F.sigmoid(mask_txt)
-
-        # mask_txt = self.getBinaryTensor(mask_txt,0.015)
-
         mask_matrix = torch.bmm(mask_img, mask_txt).cuda()
 
-        # mask_matrix = F.sigmoid(mask_matrix)
-        # mask_matrix_output = torch.bmm(mask_img, mask_txt).cuda()
-        # mask_matrix = F.softmax(mask_matrix, dim=-1)
-
-        # mask_matrix_alpha = torch.sort(mask_matrix[1].view(-1),dim=-1,descending=True).values[int(mask_matrix[0].view(-1).size()[0] * 0.7)].detach().cpu().numpy().tolist()
-        # mask_matrix_alpha = torch.sort(mask_matrix.view(-1),dim=-1,descending=True).values[int(mask_matrix.view(-1).size()[0] * 0.8)].detach().cpu().numpy().tolist()
-
-        # mask_matrix_output = self.getBinaryTensor(mask_matrix, -1)  ## 最好的值设置为0.02  ## 0.01其中decay = 0.1时结果特别好但是非正常停了
         mask_matrix_output = self.getBinaryTensor(mask_matrix, 0.02)
 
         # mask_matrix_output = []
@@ -240,12 +223,6 @@ class TransformerEncoderLayer(nn.Module):
         
         mask_matrix = self.mask(x, src_img_features, lay_idx)
 
-        # if lay_idx == 2:
-        #     mask_matrix = self.mask(x, src_img_features, lay_idx)
-        # else:
-        #     mask_matrix = torch.ones(49, 49).cuda()
-
-        #        src_img_features = torch.zeros_like(src_img_features).type_as(src_img_features)
 
         ########  gating ########
         src_img_features_tmp = src_img_features
@@ -254,13 +231,8 @@ class TransformerEncoderLayer(nn.Module):
             src_img_features, gate = self.gating(x, src_img_features)
             x = x + src_img_features
 
-            # gate_txt = 1-gate
-            # x = torch.mul(gate_txt, x) + src_img_features
-        ##########################
-        # x = self.txt_image_attention(x, encoder_padding_mask, batch_len, src_img_features)
-
         return x, mask_matrix.eq(0), src_img_features_tmp
-        # return x
+
 
 
 class TransformerDecoderLayer(nn.Module):
@@ -642,6 +614,5 @@ class GatingMechanism(nn.Module):
         #        gate = torch.tanh(self.fc_img(merge))
         #        gate = torch.relu(self.fc_img(merge))
         #        gate = torch.softplus(self.fc_img(merge))
-        # gate = F.softmax(gate, dim=0)
         img_features = torch.mul(gate, x)
         return img_features, gate
