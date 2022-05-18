@@ -448,12 +448,8 @@ def multi_head_attention_forward_image(
         if key_padding_mask is not None:
             key_padding_mask = pad(key_padding_mask, (0, 1))
 
-    attn_output_weights = torch.bmm(q, k.transpose(1, 2))    #  Q * K的转置   # 维度： 4倍batch * Q的len * K的len
+    attn_output_weights = torch.bmm(q, k.transpose(1, 2))    
     mask_matrix_tmp = mask_matrix_tmp.repeat(num_heads, 1, 1)
-
-    # attn_output_weights = attn_output_weights.masked_fill(mask_matrix_tmp, float("-inf"))
-    # attn_output_weights = attn_output_weights.masked_fill(mask_matrix_tmp, float("-inf"))
-    # attn_output_weights = attn_output_weights.masked_fill(mask_matrix_tmp, float(-1e+03))
     attn_output_weights = attn_output_weights.masked_fill(mask_matrix_tmp, float(1e-4))
     assert list(attn_output_weights.size()) == [bsz * num_heads, tgt_len, src_len]
 
