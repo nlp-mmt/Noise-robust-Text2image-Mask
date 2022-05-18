@@ -2,7 +2,6 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-###### 可视化工具包  #####
 from tensorboardX import SummaryWriter
 writer = SummaryWriter("./generate-fig")
 import math
@@ -440,15 +439,6 @@ class TransformerEncoder(FairseqEncoder):
         x = F.dropout(x, p=self.dropout, training=self.training)
         return x, embed
 
-    def get_0_1_array(self, array, rate=0.2):
-        '''按照数组模板生成对应的 0-1 矩阵，默认rate=0.2'''
-        zeros_num = int(array.size * rate)  # 根据0的比率来得到 0的个数
-        new_array = np.ones(array.size)  # 生成与原来模板相同的矩阵，全为1
-        new_array[:zeros_num] = 0  # 将一部分换为0
-        np.random.shuffle(new_array)  # 将0和1的顺序打乱
-        re_array = new_array.reshape(array.shape)  # 重新定义矩阵的维度，与模板相同
-        return re_array
-
     def forward(
         self,
         src_tokens,
@@ -467,67 +457,17 @@ class TransformerEncoder(FairseqEncoder):
         # B x T x C -> T x B x C
         x = x.transpose(0, 1)
 
-
         src_img_features = self.img_fc(src_img_features)
 
-        ######  随机打乱图片  #######
-        # src_img_features = np.random.permutation(src_img_features.cpu().detach())
-        # src_img_features = torch.from_numpy(src_img_features).cuda()
-
         src_img_features = src_img_features.transpose(0, 1)     # 49 * batch * dim
-#        src_img_features = torch.zeros_like(src_img_features).type_as(src_img_features)
-
-
-        ###############################################
-        ####### single image Transformerencoder #######
-        ###############################################
-        # src_img_mask = torch.sum(src_img_features,dim=-1).eq(0).transpose(0,1)
-        # batch_len = 49
-        #
-        # encoder_states_image = [] if return_all_hiddens else None
-        #
-        # for idx, layer in enumerate(self.layers_img):
-        #     # add LayerDrop (see https://arxiv.org/abs/1909.11556 for description)
-        #     dropout_probability = torch.empty(1).uniform_()
-        #     if not self.training or (dropout_probability > self.encoder_layerdrop):
-        #         src_img_features = layer(src_img_features, src_img_mask, batch_len, idx)
-        #         if return_all_hiddens:
-        #             assert encoder_states_image is not None
-        #             encoder_states_image.append(src_img_features)
-        #
-        # if self.layer_norm is not None:
-        #     src_img_features = self.layer_norm(src_img_features)
-        #     if return_all_hiddens:
-        #         encoder_states_image[-1] = src_img_features
-
-
-        # x = torch.cat([x, src_img_features], dim=0)
-
 
         batch_len = src_lengths[0].item()
-        #### build mask txt  #######
-        # # arr = np.ones(x.size(1) * batch_len).reshape(x.size(1), batch_len)
-        # # arr2 = arr.reshape(6, 20)
-        #
-        # arr = np.ones(batch_len).reshape(1, batch_len)
-        # arr[0][4] = '0'
-        # mask_text = torch.from_numpy(arr).repeat(x.size(1), 1).eq(1)
-        # new_arr = self.get_0_1_array(arr, rate=0.2)
-        # mask_text = torch.from_numpy(new_arr).eq(1)
 
-        # compute padding mask
         encoder_padding_mask = src_tokens.eq(self.padding_idx)
         encoder_padding_mask_image = torch.sum(src_img_features, dim=-1).eq(0).transpose(0, 1)
 
-        # encoder_padding_mask = torch.eq(encoder_padding_mask, mask_text.cuda())
-        # encoder_padding_mask = torch.cat([encoder_padding_mask, torch.zeros([src_img_features.size(1), src_img_features.size(0)]).type_as(encoder_padding_mask)], dim=1)
-
         encoder_states = [] if return_all_hiddens else None
 
-        # encoder txt layers
-
-
-        # x = torch.cat([x, src_img_features], dim=0)
         mask_matrix_tmp_tmp = torch.zeros(x.size(1), src_img_features.size(0), src_img_features.size(0)).eq(0)
         for idx, layer in enumerate(self.layers):
             # add LayerDrop (see https://arxiv.org/abs/1909.11556 for description)
@@ -536,7 +476,6 @@ class TransformerEncoder(FairseqEncoder):
             if not self.training or (dropout_probability > self.encoder_layerdrop):
                 x, mask_matrix, src_img_features = layer(x, src_img_features, encoder_padding_mask,encoder_padding_mask_image, batch_len, idx, mask_matrix_tmp_tmp.cuda())
                 mask_matrix_tmp_tmp = torch.eq(mask_matrix, mask_matrix_tmp.cuda())
-#                x = layer(x, src_img_features, encoder_padding_mask, batch_len, idx, mask_matrix_tmp_tmp.cuda())
                 if return_all_hiddens:
                     assert encoder_states is not None
                     encoder_states.append(x)
@@ -545,17 +484,7 @@ class TransformerEncoder(FairseqEncoder):
             x = self.layer_norm(x)
             if return_all_hiddens:
                 encoder_states[-1] = x
-
-        ########  gating ########
-        # src_img_features = self.Gating(x, src_img_features)
-        # # # src_img_features = self.gating(x, x[batch_len:])
-        # x = x +  src_img_features
-
-        ####### concat need #########
-        # src_img_mask = torch.zeros(x.size(1), batch_len).eq(1).cuda()
-        # src_img_mask = torch.sum(src_img_features, dim=-1).eq(0).transpose(0, 1)
-        # encoder_padding_mask = torch.cat([encoder_padding_mask, src_img_mask], dim=-1)
-        # encoder_padding_mask = torch.cat([encoder_padding_mask, mask_matrix_tmp_tmp], dim=-1)
+                
         return EncoderOut(
             encoder_out=x,  # T x B x C
             encoder_padding_mask=encoder_padding_mask,  # B x T
@@ -1103,23 +1032,11 @@ def transformer_wmt_en_de_big_align(args):
 class GatingMechanism(nn.Module):
     def __init__(self, args):
         super().__init__()
-        # self.x_linear = Linear(, 1)
-        # self.x_linear = Linear(batch_len, 1)
 
         self.fc_img = Linear(args.gating_dim * 2, 1)
 
-    #        self.fc_img_x = Linear(arg.gating_dim, 128)
-
     def forward(self, x, grid_img_features):
 
-
-        # x = torch.mean(x, dim=0, keepdim=True)
-        # region_x_features = torch.cat([region_img_features, x.repeat(region_img_features.size(0), 1, 1)], dim=-1)
-        # region_linear_x = self.fc_img(region_x_features)
-        #
-        # region_sigmoid_x = torch.sigmoid(region_linear_x)  # max_len * batch * 1
-        # region_img_features = torch.mul(region_sigmoid_x, region_img_features)
-        # return region_img_features, region_sigmoid_x
 
         grid_img_features = torch.mean(grid_img_features, dim=0, keepdim=True)  ## 1*batch*dim
         t, b, c = x.shape
